@@ -271,3 +271,12 @@
 - **FAK-29 [P]** Arkiverad HTML-kopia visas skalad till mobilens bredd, utan att ändra arkiverade uppgifter.
 - **FAK-30 [F]** Arkivering av en faktisk PDF med fast sidlayout och förhandsgranskning av samma PDF kräver separat implementation och tester. Version 1.8.1 sparar fortfarande HTML-snapshot.
 - **OBS:** Safari-utskrift och sidbrytningar måste verifieras manuellt på iPhone och PC.
+
+
+## Version 1.8.2 – iPhone PWA, kunder och uppdrag
+- Endast installerad iPhone PWA är målplattform i denna fas. Ingen synk mellan enheter. Lokal data och export/återställning ska skyddas innan skarp användning.
+- Arkiverade testfakturor: fakturanumret visas i själva fakturans metadata; befintliga arkivkopior korrigeras i visningsläge utan att ändra lagrade original.
+- Utskrift från arkivvisningen använder utskrift av aktuellt dokument, utan popup-fönster; separat Avbryt-knapp stänger förhandsgranskningen. iOS Safari/PWA måste funktionstestas.
+- Kund och uppdrag kan arkiveras och återaktiveras. Ingen permanent radering av historiska poster, referenser eller fakturor. Arkiverade poster döljs som standard i kundlistan och nya registreringsval.
+- Standardtimpris flyttas från kund till uppdrag. Vid första öppning migreras eventuellt tidigare kundtimpris till respektive uppdrag om uppdraget saknar pris. Historiska registreringspriser ändras inte.
+- Arkiverad testfaktura är fortfarande inte en juridiskt utfärdad faktura. PDF-arkivering och säker återställning återstår.
