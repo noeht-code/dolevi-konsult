@@ -1,5 +1,1 @@
-Dolevi Konsult PWA v1.7.3
-Publicera mappens filer på HTTPS med index.html i webbplatsens rot eller underkatalog.
-Öppna URL i Safari på iPhone och välj Dela > Lägg till på hemskärmen.
-Starta appen online en gång och testa sedan i flygplansläge.
-Inga riktiga kunddata; lokal lagring är inte säker backup.
+Dolevi Konsult v1.8.3 – iPhone PWA. PDF generated locally; share using iOS Share Sheet. Upload all files to GitHub Pages. Test-only, not valid invoices.

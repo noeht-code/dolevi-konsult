@@ -1,3 +1,17 @@
+# Version 1.8.3 – iPhone PWA PDF-korrigering
+
+- Installerad iPhone-PWA är enda målmiljön i denna fas.
+- Utkast har inget tilldelat fakturanummer och märks UTKAST.
+- Arkiverad testfaktura visar arkivnummer i fakturans metadata och PDF.
+- Visa / Dela PDF skapar A4-PDF helt offline och använder iOS delningsfunktion; ingen window.print eller popup krävs.
+- Avbryt stänger förhandsgranskningen av utkast och arkiverad testfaktura.
+- PDF är en förenklad dokumentrendering av befintliga fakturauppgifter, inklusive eventuell bilaga. Det är inte en pixelidentisk återgivning av HTML-layouten.
+- PDF genereras vid begäran; arkiverad HTML och data sparas fortsatt lokalt. Permanent låst PDF-arkivering återstår.
+- Alla dokument är TEST / DEMO och inte giltiga fakturor.
+- Kräver verkligt funktionstest på installerad iPhone-PWA.
+
+---
+
 # Dolevi Konsult – samlad produkt- och kravspecifikation
 
 **Dokumentversion:** 1.7.2 · **Datum:** 2026-11-21 · **Språk:** svenska  
