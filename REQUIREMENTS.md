@@ -361,3 +361,11 @@
 - Limit displayed rows to 30 initially and offer “Visa 30 till” while more matching entries remain. Filtering occurs before pagination.
 - Filter controls do not change the stored registration or invoice data; backup format unchanged.
 - Acceptance tests: month/year boundary, draft vs invoiced, time/cost split, 31+ entries, iPhone width, backup restore.
+
+
+## Version 1.9.3.1 – Collapsible Time filters (2026-11-22)
+- Default Time overview displays a single compact row with selected customer, selected assignment (or all assignments) and a downward chevron.
+- Tapping the row expands customer, assignment, period, billing-status and article-type controls together; tapping again collapses them.
+- Filter selections update the list and the summary row; expanded state remains while changing filters.
+- Defaults and 30-row pagination remain unchanged from 1.9.3. No storage schema or backup format changes.
+- Acceptance: expansion/collapse, switching customer and assignment, filter persistence, iPhone layout and saved data unaffected.
