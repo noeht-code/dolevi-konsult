@@ -263,3 +263,11 @@
 - **FAK-25 [P]** Exportera en lokal JSON-säkerhetskopia av prototypens samtliga data från Fakturor. Import/återställning och automatisk backup återstår.
 - **FAK-26 [F]** Skarp fakturautfärdning med atomisk nummerserie, korrekt moms, juridisk granskning, beständig serverlagring, återställning, och flera enheter krävs före produktionsdrift.
 - **Varning:** localStorage är inte ett tillförlitligt fakturaarkiv; nummerkontroll är bara lokal och kan kringgås genom olika webbläsare/enheter. Den här versionen får endast användas med testdata.
+
+
+## Version 1.8.1 – Korrigering av arkivvisning och utskrift
+- **FAK-27 [P]** Arkiverad testfaktura visar sitt sparade fakturanummer i dokumentets fakturanummerfält, även för redan arkiverade kopior.
+- **FAK-28 [P]** Utskrift öppnar en separat synlig A4-utskriftsvy med en knapp som användaren själv trycker på. Detta ersätter automatisk utskrift från dold iframe, som inte fungerar tillförlitligt i iOS Safari.
+- **FAK-29 [P]** Arkiverad HTML-kopia visas skalad till mobilens bredd, utan att ändra arkiverade uppgifter.
+- **FAK-30 [F]** Arkivering av en faktisk PDF med fast sidlayout och förhandsgranskning av samma PDF kräver separat implementation och tester. Version 1.8.1 sparar fortfarande HTML-snapshot.
+- **OBS:** Safari-utskrift och sidbrytningar måste verifieras manuellt på iPhone och PC.
