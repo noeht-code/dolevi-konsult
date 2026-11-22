@@ -333,3 +333,12 @@
 - Betalningshistorik ingår i JSON-export och valideras vid återställning; äldre 1.8.4-backupper utan betalningar är fortsatt giltiga.
 - Inga skarpa fakturor, verkliga betalningar, påminnelser eller bankkopplingar.
 - Att återställa äldre backup kan backa fakturanummerserien; måste lösas innan skarp fakturering.
+
+
+## v1.9.1 – UI refinement (2026-11-22)
+- Main tab selection resets scroll position to top.
+- Bottom navigation uses consistent fixed-height icon and label rows.
+- Customer overview uses contrasted customer cards and white assignment cards.
+- Customer title/chevron opens a dedicated customer detail view with read-only facts and discreet edit action.
+- Assignment management is moved to customer details; overview assignment tap opens registration.
+- Existing localStorage data model, invoice/payments, and backup schema remain unchanged.
