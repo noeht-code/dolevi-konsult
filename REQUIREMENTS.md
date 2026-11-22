@@ -322,3 +322,14 @@
 - Keep backup format `dolevi-demo-backup` compatible with v1.8.4 backups.
 - Update app version and service worker cache identifier.
 - Acceptance: the exported 2026-11-22 v1.8.4 backup with 3 customers, 4 projects, 9 entries, 6 articles and 3 invoices passes validation without modifying device data.
+
+
+## v1.9.0 – Kundreskontra (testläge)
+- Arkiverade testfakturor kan ha flera betalningar (datum, belopp, anteckning), sparade separat från låst fakturasnapshot.
+- Visa totalt belopp inkl. illustrativ 25 % moms, betalt belopp och återstående saldo.
+- Visa dynamisk status: obetald, förfallen, delbetald, betald. Förfallna är obetalda efter förfallodag.
+- Filtrera testarkivet på obetalda, förfallna, delbetalda och betalda.
+- Betalningar kan ångras med bekräftelse; summan får inte överstiga fakturabeloppet.
+- Betalningshistorik ingår i JSON-export och valideras vid återställning; äldre 1.8.4-backupper utan betalningar är fortsatt giltiga.
+- Inga skarpa fakturor, verkliga betalningar, påminnelser eller bankkopplingar.
+- Att återställa äldre backup kan backa fakturanummerserien; måste lösas innan skarp fakturering.
