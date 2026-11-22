@@ -312,3 +312,13 @@
 - PDF-rubriken visar också testfakturanumret för enklare identifiering.
 - Befintliga testnummer och arkiverade uppgifter ändras inte; endast visning/export korrigeras.
 - iPhone PWA är enda testplattform. Test med arkiverade kopior krävs.
+
+
+## v1.8.4.1 – Restore validation correction (2026-11-22)
+
+- Fix restore validation to follow the established registration → assignment/project → customer relationship. Registration records do not require a redundant `customerId`.
+- If a registration includes `customerId`, verify that it matches the referenced project customer.
+- Continue rejecting missing projects, missing customers, invalid identifiers and invalid invoice references; preserve preview and explicit confirmation before destructive restore.
+- Keep backup format `dolevi-demo-backup` compatible with v1.8.4 backups.
+- Update app version and service worker cache identifier.
+- Acceptance: the exported 2026-11-22 v1.8.4 backup with 3 customers, 4 projects, 9 entries, 6 articles and 3 invoices passes validation without modifying device data.
