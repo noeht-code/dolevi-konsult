@@ -1,1 +1,1 @@
-Dolevi Konsult v1.8.3 – iPhone PWA. PDF generated locally; share using iOS Share Sheet. Upload all files to GitHub Pages. Test-only, not valid invoices.
+Dolevi Konsult v1.8.4. Upload contents to GitHub Pages root. Do not delete installed iPhone PWA. Export and verify backup before updating.

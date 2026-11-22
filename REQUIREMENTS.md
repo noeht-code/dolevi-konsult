@@ -1,3 +1,14 @@
+# Version 1.8.4 – Backup och återställning (iPhone PWA)
+
+- JSON-export via iOS delningsmeny när den stöds, annars nedladdning. Användaren måste själv spara och kontrollera filen i Filer/iCloud Drive.
+- Import av JSON-backup med format- och strukturkontroller, sammanfattning av innehåll, separat bekräftelseruta och uttryckligt godkännande före överskrivning.
+- Återställning ersätter all appdata, ingen sammanslagning. Vid lagringsfel görs försök till rollback.
+- Backuper är okrypterade och innehåller kund- och fakturauppgifter. Ingen automatisk backup eller molnsynk.
+- Endast installerad iPhone PWA testas. Verkligt iOS-test återstår.
+- PDF-visning och fakturaförhandsgranskning lämnas oförändrade och granskas samlat senare.
+
+---
+
 # Version 1.8.3 – iPhone PWA PDF-korrigering
 
 - Installerad iPhone-PWA är enda målmiljön i denna fas.

@@ -154,18 +154,77 @@ function invoicePeriod(items){const ds=items.map(e=>e.date).filter(Boolean).sort
 function invoiceGroups(items){const groups=new Map();items.forEach(e=>{const p=data.projects.find(p=>p.id===e.projectId);const key=(p?.reference||'').trim();if(!groups.has(key))groups.set(key,[]);groups.get(key).push(e)});return [...groups]}
 function invoiceStatusLabel(i){return ({draft:'Utkast',issued:'Testarkiverad',sent:'Skickad',partpaid:'Delbetald',paid:'Betald',credited:'Krediterad'})[i.status]||'Okänd status'}
 function invoiceRegisterCard(i){const c=data.customers.find(c=>c.id===i.customerId),items=invoiceItems(i),sum=items.reduce((n,e)=>n+Number(e.quantity)*Number(e.price),0);const draft=i.status==='draft';return `<div class="card" style="cursor:default"><div class="row"><div><strong>${draft?'Utkast':esc(i.invoiceNumber||'Nummer saknas')} · ${esc(c?.name||i.customerSnapshot?.name||'Okänd kund')}</strong><span class="muted">${esc(invoiceStatusLabel(i))} · ${draft?'Skapat '+esc(i.created||''): 'Fakturadatum '+esc(i.invoiceDate||'')} · ${items.length} poster · ${esc(invoicePeriod(items))}</span></div><span class="amount">${money(sum)}</span></div><div class="row" style="margin-top:12px;flex-wrap:wrap">${draft?`<button class="btn" data-open-draft="${i.id}">Redigera och förhandsgranska</button><button class="btn secondary" data-delete-draft="${i.id}">Ta bort utkast</button>`:`<button class="btn secondary" data-read-invoice="${i.id}">Visa uppgifter</button>`}</div></div>`}
-function invoices(){const drafts=data.invoices.filter(i=>i.status==='draft'),issued=data.invoices.filter(i=>i.status!=='draft');const statuses=[['all','Alla'],['issued','Testarkiverade'],['sent','Skickade'],['partpaid','Delbetalda'],['paid','Betalda'],['credited','Krediterade']];const legacy=String(data.invoiceSequence?.legacyLast||'');$('invoices').innerHTML=`<h2>Fakturaregister</h2><p class="muted">Utkast och låsta testkopior. Testnummer används lokalt; ingen skarp faktura utfärdas.</p><h3>Fakturautkast (${drafts.length})</h3>${drafts.length?drafts.map(invoiceRegisterCard).join(''):'<div class="empty">Inga fakturautkast ännu.</div>'}<div id="invoiceEditor"></div><h3>Arkiverade testfakturor (${issued.length})</h3><label>Visa status<select id="invoiceStatusFilter">${statuses.map(([v,t])=>`<option value="${v}">${t}</option>`).join('')}</select></label><div id="issuedInvoiceList"></div><div id="issuedInvoiceDetails"></div><button class="btn full secondary" id="goReport">Gå till Rapporter</button><div class="notice">Version 1.8.3.1: testarkivering och lokalt JSON-backup. Ingen skarp fakturering, säker backend eller automatisk backup. Moms 25 % är illustrativ.</div><button class="btn secondary full" id="exportBackup">Exportera säkerhetskopia (JSON)</button>`;
+function invoices(){const drafts=data.invoices.filter(i=>i.status==='draft'),issued=data.invoices.filter(i=>i.status!=='draft');const statuses=[['all','Alla'],['issued','Testarkiverade'],['sent','Skickade'],['partpaid','Delbetalda'],['paid','Betalda'],['credited','Krediterade']];const legacy=String(data.invoiceSequence?.legacyLast||'');$('invoices').innerHTML=`<h2>Fakturaregister</h2><p class="muted">Utkast och låsta testkopior. Testnummer används lokalt; ingen skarp faktura utfärdas.</p><h3>Fakturautkast (${drafts.length})</h3>${drafts.length?drafts.map(invoiceRegisterCard).join(''):'<div class="empty">Inga fakturautkast ännu.</div>'}<div id="invoiceEditor"></div><h3>Arkiverade testfakturor (${issued.length})</h3><label>Visa status<select id="invoiceStatusFilter">${statuses.map(([v,t])=>`<option value="${v}">${t}</option>`).join('')}</select></label><div id="issuedInvoiceList"></div><div id="issuedInvoiceDetails"></div><button class="btn full secondary" id="goReport">Gå till Rapporter</button><div class="notice">Version 1.8.4: testarkivering samt lokal säkerhetskopiering och återställning. Ingen skarp fakturering, säker backend eller automatisk backup. Moms 25 % är illustrativ.</div><div class="card" style="cursor:default"><h3>Säkerhetskopiering</h3><p class="muted">Spara en kopia i Filer/iCloud Drive. Kopian innehåller kunduppgifter, registreringar, utkast, testarkiv och konfiguration. Filen är inte krypterad.</p><button type="button" class="btn secondary full" id="exportBackup">Spara säkerhetskopia (JSON)</button><label style="margin-top:14px">Återställ från säkerhetskopia<input type="file" id="importBackup" accept=".json,application/json"></label><div id="restorePreview" aria-live="polite"></div></div>`;
  const refreshIssued=()=>{const status=$('invoiceStatusFilter').value,filtered=issued.filter(i=>status==='all'||i.status===status);$('issuedInvoiceList').innerHTML=filtered.length?filtered.map(invoiceRegisterCard).join(''):'<div class="empty">Inga fakturor med vald status.</div>';document.querySelectorAll('[data-read-invoice]').forEach(b=>b.onclick=()=>{const i=data.invoices.find(x=>x.id===Number(b.dataset.readInvoice));if(!i)return;const c=data.customers.find(x=>x.id===i.customerId);$('issuedInvoiceDetails').innerHTML=i.archiveHtml?`<div class="card" style="cursor:default"><h3>Låst testkopia – ${esc(i.invoiceNumber)}</h3><p class="muted">Arkiverad ${esc(i.archivedAt||'')} · Detta är ingen giltig faktura.</p><div class="row" style="flex-wrap:wrap"><button type="button" class="btn" id="printArchived">Visa / Dela PDF</button><button type="button" class="btn secondary" id="closeArchived">Avbryt</button></div><p class="muted">PDF skapas lokalt på iPhone. Välj Visa / Dela PDF för att spara i Filer eller skriva ut via iOS.</p><div id="invoicePreview"><div class="invoice-print-warning">TESTKOPIA – EJ GILTIG FAKTURA</div><div class="archive-preview-viewport"><div class="archive-preview-content">${i.archiveHtml}</div></div></div></div>`:`<div class="card">Äldre registerpost saknar arkiverad fakturakopia.</div>`;if(i.archiveHtml){const meta=$('issuedInvoiceDetails').querySelector('.archive-preview-content .invoice-meta');const numRow=[...(meta?.children||[])].find(x=>x.querySelector('span')?.textContent.trim()==='Fakturanummer');if(numRow?.querySelector('strong'))numRow.querySelector('strong').textContent=String(i.invoiceNumber||'Saknas');$('printArchived').onclick=()=>exportInvoicePdf(i);$('closeArchived').onclick=()=>{$('issuedInvoiceDetails').innerHTML=''};requestAnimationFrame(fitArchivedPreview)}$('issuedInvoiceDetails').scrollIntoView({block:'nearest'})})};
- $('invoiceStatusFilter').onchange=refreshIssued;refreshIssued();$('exportBackup').onclick=exportBackup;$('goReport').onclick=()=>tab('reports');document.querySelectorAll('[data-open-draft]').forEach(b=>b.onclick=()=>{try{invoiceEditor(Number(b.dataset.openDraft))}catch(err){console.error('Fakturaförhandsgranskning:',err);alert('Förhandsgranskningen kunde inte öppnas: '+err.message)}});document.querySelectorAll('[data-delete-draft]').forEach(b=>b.onclick=()=>{const id=Number(b.dataset.deleteDraft),i=data.invoices.find(i=>i.id===id);if(!i||!confirm('Ta bort utkastet och frigör registreringarna?'))return;data.entries.forEach(e=>{if(e.draftId===id)delete e.draftId});data.invoices=data.invoices.filter(x=>x.id!==id);save();invoices()})}
+ $('invoiceStatusFilter').onchange=refreshIssued;refreshIssued();$('exportBackup').onclick=exportBackup;$('importBackup').onchange=prepareRestore;$('goReport').onclick=()=>tab('reports');document.querySelectorAll('[data-open-draft]').forEach(b=>b.onclick=()=>{try{invoiceEditor(Number(b.dataset.openDraft))}catch(err){console.error('Fakturaförhandsgranskning:',err);alert('Förhandsgranskningen kunde inte öppnas: '+err.message)}});document.querySelectorAll('[data-delete-draft]').forEach(b=>b.onclick=()=>{const id=Number(b.dataset.deleteDraft),i=data.invoices.find(i=>i.id===id);if(!i||!confirm('Ta bort utkastet och frigör registreringarna?'))return;data.entries.forEach(e=>{if(e.draftId===id)delete e.draftId});data.invoices=data.invoices.filter(x=>x.id!==id);save();invoices()})}
 function invoiceEditor(id){const i=data.invoices.find(i=>i.id===id&&i.status==='draft');if(!i)return;const c=data.customers.find(c=>c.id===i.customerId),items=invoiceItems(i),today=localDate(new Date());const days=i.paymentDays??c?.paymentDays??30,date=i.invoiceDate||today;const due=(i.manualDue&&i.dueDate)?i.dueDate:invoiceDateAdd(date,days);if(i.paymentDays==null||(!i.manualDue&&i.dueDate!==due)){i.paymentDays=days;i.invoiceDate=date;i.dueDate=due;save()}$('invoiceEditor').innerHTML=`<h2>Redigera fakturautkast – ${esc(c?.name||'Okänd kund')}</h2><form id="invoiceForm"><div class="row"><label style="flex:1">Fakturadatum<input name="invoiceDate" type="date" required value="${esc(date)}"></label><label style="flex:1">Betalningsvillkor, dagar<input name="paymentDays" type="number" min="0" max="365" step="1" required value="${days}"></label></div><label>Förfallodatum (kan ändras manuellt)<input name="dueDate" type="date" required value="${esc(due)}"></label><label class="checkline"><input type="checkbox" name="attachReport" ${i.attachReport?'checked':''}> Bifoga detaljerad registreringsrapport som fakturaunderlag</label><label>Kommentar på fakturan (frivilligt)<textarea name="comment" rows="2" maxlength="160">${esc(i.comment||'')}</textarea></label><p class="muted">Fakturaperiod: ${esc(invoicePeriod(items))}. Datum och betalningsvillkor kan ändras innan fakturan utfärdas.</p><div class="row"><button class="btn" type="submit">Spara utkast</button><button class="btn secondary" type="button" id="previewInvoice">Förhandsgranska</button><button class="btn secondary" type="button" id="archiveTest">Arkivera testkopia</button></div></form><div id="invoicePreview"></div>`;
  const commentInput=$('invoiceForm').elements.namedItem('comment');commentInput.addEventListener('input',()=>{const lines=commentInput.value.split(/\r?\n/);if(lines.length>2)commentInput.value=lines.slice(0,2).join('\n')});
  const f=$('invoiceForm'),dateInput=f.elements.namedItem('invoiceDate'),daysInput=f.elements.namedItem('paymentDays'),dueInput=f.elements.namedItem('dueDate');let manualDue=!!i.manualDue;const recalc=()=>{manualDue=false;dueInput.value=invoiceDateAdd(dateInput.value,daysInput.value)};dateInput.onchange=recalc;daysInput.onchange=recalc;dueInput.onchange=()=>{manualDue=dueInput.value!==invoiceDateAdd(dateInput.value,daysInput.value)};
  function persist(){const fd=new FormData(f),d=String(fd.get('invoiceDate')||''),v=Number(fd.get('paymentDays')),due=String(fd.get('dueDate')||'');if(!/^\d{4}-\d{2}-\d{2}$/.test(d)||!/^\d{4}-\d{2}-\d{2}$/.test(due)||!Number.isInteger(v)||v<0||v>365){alert('Kontrollera datum och betalningsvillkor.');return false}i.invoiceDate=d;i.paymentDays=v;i.dueDate=due;i.manualDue=manualDue;i.comment=String(fd.get('comment')||'').split(/\r?\n/).slice(0,2).join('\n');i.attachReport=fd.has('attachReport');try{save();return true}catch(err){alert('Kunde inte spara: '+err.message);return false}}
  f.onsubmit=e=>{e.preventDefault();if(persist()){alert('Fakturautkastet är sparat.');invoiceEditor(id)}};
  $('previewInvoice').onclick=()=>{if(persist()){showInvoicePreview(i);$('invoicePreview').scrollIntoView({block:'start',behavior:'smooth'})}};$('archiveTest').onclick=()=>{if(persist())archiveTestInvoice(i)};showInvoicePreview(i);$('invoiceEditor').scrollIntoView({block:'start',behavior:'smooth'})}
-function exportBackup(){
- const content=JSON.stringify({format:'dolevi-demo-backup',version:'1.8',exportedAt:new Date().toISOString(),data},null,2);
- const blob=new Blob([content],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='dolevi-testbackup-'+localDate(new Date())+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+async function exportBackup(){
+ try{
+  const payload={format:'dolevi-demo-backup',version:'1.8.4',exportedAt:new Date().toISOString(),data};
+  const content=JSON.stringify(payload,null,2),name='dolevi-backup-'+localDate(new Date())+'-'+new Date().toTimeString().slice(0,5).replace(':','')+'.json';
+  const blob=new Blob([content],{type:'application/json'});
+  if(navigator.canShare&&navigator.share){
+   const file=new File([blob],name,{type:'application/json'});
+   if(navigator.canShare({files:[file]})){
+    try{await navigator.share({files:[file],title:'Dolevi Konsult säkerhetskopia'});return}
+    catch(err){if(err.name==='AbortError')return;console.warn('Delning misslyckades, försöker filnedladdning',err)}
+   }
+  }
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+  alert('Spara den nedladdade JSON-filen i Filer, gärna i iCloud Drive. Kontrollera att filen finns där.');
+ }catch(err){alert('Säkerhetskopian kunde inte skapas: '+err.message)}
+}
+function validateBackup(payload){
+ if(!payload||payload.format!=='dolevi-demo-backup'||typeof payload.data!=='object'||!payload.data||Array.isArray(payload.data))throw Error('Filen är inte en Dolevi-säkerhetskopia.');
+ const d=payload.data;
+ for(const field of ['customers','projects','entries','articles','invoices']){
+  if(!Array.isArray(d[field]))throw Error('Säkerhetskopian saknar giltig lista: '+field);
+  if(d[field].length>100000)throw Error('Orimligt många poster i '+field);
+ }
+ if(!d.company||typeof d.company!=='object'||Array.isArray(d.company))throw Error('Företagsuppgifter saknas.');
+ for(const field of ['customers','projects','entries','articles','invoices']){
+  const ids=new Set();
+  for(const item of d[field]){
+   if(!item||typeof item!=='object'||Array.isArray(item)||!Number.isSafeInteger(item.id)||item.id<1||ids.has(item.id))throw Error('Felaktigt eller dubblerat ID i '+field);
+   ids.add(item.id);
+  }
+ }
+ const customers=new Set(d.customers.map(x=>x.id)),projects=new Map(d.projects.map(x=>[x.id,x]));
+ for(const p of d.projects)if(!customers.has(p.customerId))throw Error('Ett uppdrag saknar kund.');
+ for(const e of d.entries)if(!customers.has(e.customerId)||!projects.has(e.projectId)||projects.get(e.projectId).customerId!==e.customerId)throw Error('En registrering har en ogiltig kund eller ett ogiltigt uppdrag.');
+ for(const i of d.invoices)if(!customers.has(i.customerId)||!['draft','issued','sent','partpaid','paid','credited'].includes(i.status))throw Error('En faktura har ogiltig kund eller status.');
+ if(d.appConfig!=null&&(typeof d.appConfig!=='object'||Array.isArray(d.appConfig)))throw Error('Felaktig appkonfiguration.');
+ if(d.invoiceSequence!=null&&(typeof d.invoiceSequence!=='object'||Array.isArray(d.invoiceSequence)))throw Error('Felaktig fakturanummerserie.');
+ return d;
+}
+async function prepareRestore(event){
+ const file=event.target.files?.[0],box=$('restorePreview');box.innerHTML='';if(!file)return;
+ try{
+  if(file.size>25*1024*1024)throw Error('Filen är för stor (max 25 MB).');
+  const payload=JSON.parse(await file.text()),candidate=validateBackup(payload);
+  const date=payload.exportedAt&&Number.isFinite(Date.parse(payload.exportedAt))?new Date(payload.exportedAt).toLocaleString('sv-SE'):'Okänt datum';
+  box.innerHTML=`<div class="notice"><strong>Kontroll av säkerhetskopia</strong><p>Fil: ${esc(file.name)}<br>Skapad: ${esc(date)}<br>Kunder: ${candidate.customers.length} · Uppdrag: ${candidate.projects.length}<br>Registreringar: ${candidate.entries.length} · Fakturor: ${candidate.invoices.length}</p><p><strong>Varning:</strong> Återställning ersätter ALLA nuvarande appdata på denna iPhone. Spara en ny säkerhetskopia först. Ingen sammanslagning sker.</p><label class="checkline"><input type="checkbox" id="restoreConfirm"> Jag har sparat en kopia av mina nuvarande uppgifter och vill ersätta dem.</label><button type="button" class="btn" id="restoreNow" disabled>Återställ och ersätt data</button><button type="button" class="btn secondary" id="restoreCancel">Avbryt</button></div>`;
+  $('restoreConfirm').onchange=e=>$('restoreNow').disabled=!e.target.checked;
+  $('restoreCancel').onclick=()=>{box.innerHTML='';$('importBackup').value=''};
+  $('restoreNow').onclick=()=>{
+   if(!$('restoreConfirm').checked||!confirm('SISTA KONTROLLEN: Ersätta alla nuvarande Dolevi-data med innehållet i säkerhetskopian?'))return;
+   const key='dolevi-demo-v01',before=localStorage.getItem(key),next=JSON.stringify(candidate);
+   try{
+    localStorage.setItem(key,next);
+    if(localStorage.getItem(key)!==next)throw Error('Lagringen kunde inte verifieras.');
+    data=candidate;
+    if(!Array.isArray(data.invoices))data.invoices=[];
+    if(!data.invoiceSequence)data.invoiceSequence={legacyLast:''};
+    if(!data.appConfig)data.appConfig={nextInvoiceNumber:'',language:'sv',vatRate:'25',invoiceTemplate:'classic-a4',jurisdiction:'SE'};
+    $('importBackup').value='';box.innerHTML='';tab('invoices');alert('Återställningen är klar. Kontrollera kunder, registreringar och fakturaarkiv.');
+   }catch(err){try{if(before===null)localStorage.removeItem(key);else localStorage.setItem(key,before)}catch{}alert('Återställningen misslyckades. Tidigare data har försökt återställas: '+err.message)}
+  };
+ }catch(err){box.innerHTML=`<div class="notice">Säkerhetskopian kunde inte godkännas: ${esc(err.message)}. Inga uppgifter har ändrats.</div>`;}
 }
 function archiveTestInvoice(i){
  const raw=String(data.appConfig?.nextInvoiceNumber||'').trim();
@@ -202,7 +261,7 @@ function showInvoicePreview(i){
 
 
 
-// v1.8.3.1: Offline PDF export. No popup and no window.print; supports iOS Share Sheet.
+// v1.8.4: Offline PDF export. No popup and no window.print; supports iOS Share Sheet.
 // PDF uses A4 and WinAnsi text encoding; source data is the current invoice or archived frozen HTML.
 function makeInvoicePdf(invoice){
  const archived=invoice.status!=='draft'&&!!invoice.archiveHtml;
