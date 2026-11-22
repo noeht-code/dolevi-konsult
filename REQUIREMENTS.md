@@ -342,3 +342,12 @@
 - Customer title/chevron opens a dedicated customer detail view with read-only facts and discreet edit action.
 - Assignment management is moved to customer details; overview assignment tap opens registration.
 - Existing localStorage data model, invoice/payments, and backup schema remain unchanged.
+
+
+## Version 1.9.2 – Time tab UI (2026-11-22)
+- Compact customer and assignment filters on one row.
+- Compact registration rows: date, article, quantity, chevron; tapping opens read-only detail view, with edit/delete for unlocked entries.
+- New registration defaults to today's local date; selected date persists for further new registrations until leaving Time tab; +/- shifts by one calendar day. Editing existing entries preserves their original date.
+- Mobile layout: input font >=16px to avoid iOS focus zoom, constrained widths and overflow, blur after saving.
+- Existing data model, invoice associations, payment handling and JSON backup format unchanged.
+- Acceptance testing on installed iPhone PWA required.
