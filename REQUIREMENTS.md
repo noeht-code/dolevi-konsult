@@ -294,3 +294,10 @@
 - Kund och uppdrag kan arkiveras och återaktiveras. Ingen permanent radering av historiska poster, referenser eller fakturor. Arkiverade poster döljs som standard i kundlistan och nya registreringsval.
 - Standardtimpris flyttas från kund till uppdrag. Vid första öppning migreras eventuellt tidigare kundtimpris till respektive uppdrag om uppdraget saknar pris. Historiska registreringspriser ändras inte.
 - Arkiverad testfaktura är fortfarande inte en juridiskt utfärdad faktura. PDF-arkivering och säker återställning återstår.
+
+
+## Version 1.8.3.1 – Fakturanummer i arkiverad testkopia
+- Arkiverat testfakturanummer ska alltid visas i fakturans metadata och i PDF, även för tidigare sparade testkopior.
+- PDF-rubriken visar också testfakturanumret för enklare identifiering.
+- Befintliga testnummer och arkiverade uppgifter ändras inte; endast visning/export korrigeras.
+- iPhone PWA är enda testplattform. Test med arkiverade kopior krävs.
