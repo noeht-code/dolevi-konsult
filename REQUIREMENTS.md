@@ -351,3 +351,13 @@
 - Mobile layout: input font >=16px to avoid iOS focus zoom, constrained widths and overflow, blur after saving.
 - Existing data model, invoice associations, payment handling and JSON backup format unchanged.
 - Acceptance testing on installed iPhone PWA required.
+
+
+## Version 1.9.3 – Time registration filters (2026-11-22)
+- Time tab defaults: all dates, not invoiced, all article types, newest date first.
+- Unbilled includes entries reserved by invoice drafts; display an “I utkast” marker and preserve their edit lock.
+- Issued invoice entries are hidden from the default view; status filter options: not invoiced, all, invoiced.
+- Period options: all dates, current calendar month, previous calendar month. Type options: all, time (hour units / time mode), costs/other.
+- Limit displayed rows to 30 initially and offer “Visa 30 till” while more matching entries remain. Filtering occurs before pagination.
+- Filter controls do not change the stored registration or invoice data; backup format unchanged.
+- Acceptance tests: month/year boundary, draft vs invoiced, time/cost split, 31+ entries, iPhone width, backup restore.
