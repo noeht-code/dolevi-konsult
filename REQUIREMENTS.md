@@ -369,3 +369,12 @@
 - Filter selections update the list and the summary row; expanded state remains while changing filters.
 - Defaults and 30-row pagination remain unchanged from 1.9.3. No storage schema or backup format changes.
 - Acceptance: expansion/collapse, switching customer and assignment, filter persistence, iPhone layout and saved data unaffected.
+
+
+## v1.9.4 – Articles moved under Company
+- The bottom navigation contains five tabs: Kunder, Tid, Rapporter, Fakturor, Företag.
+- Företag provides an Artiklar navigation row. The Articles list is a separate subview with back navigation.
+- Article rows show name, unit/entry method, optional default price, and chevron.
+- Tapping an article opens read-only details, with explicit edit action. New articles open the editor.
+- Preserve existing article identifiers and registration snapshots (historical article names and prices).
+- No changes to localStorage schema, invoice data, or backup/restore formats.
