@@ -23,7 +23,7 @@ try{
  if($LASTEXITCODE -ne 0){throw 'Checkout failed'}
  if(Test-Path (Join-Path $root 'bridge-smoke.txt')){throw 'Test file already exists'}
  $prompt='Use only the apply_patch file editing tool to create bridge-smoke.txt containing exactly DOLEVI BRIDGE WRITE TEST (optional final newline). Do not invoke shell commands, inspect Git status, read back the file, modify other files, commit, push, access credentials or network. The caller independently checks Git and file contents. If editing succeeds return BRIDGE WRITE PASS; otherwise return BRIDGE WRITE FAIL. Approved task JSON: '+$t.body
- $events=$prompt | codex exec --cd $root --sandbox workspace-write --ignore-user-config --ephemeral --json -
+ $events=$prompt | codex exec --cd $root --sandbox workspace-write --ignore-user-config --ephemeral -c 'windows.sandbox="elevated"' --json -
  if($LASTEXITCODE -ne 0){throw 'Codex failed'}
  $p=@($events | ForEach-Object {$_ | ConvertFrom-Json})
  $m=@($p | Where-Object {$_.type -eq 'item.completed' -and $_.item.type -eq 'agent_message'})
