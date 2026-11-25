@@ -1,0 +1,16 @@
+name: WP-01 history tests
+on:
+  push:
+    branches: ['develop/1.10.0']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  history:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node tests/wp01-history.test.cjs
