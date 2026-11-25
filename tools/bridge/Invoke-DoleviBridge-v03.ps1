@@ -16,6 +16,8 @@ if($q.scope -cne 'bridge-smoke.txt' -or $q.fileContent -cne 'DOLEVI BRIDGE WRITE
 $root=Join-Path ([IO.Path]::GetTempPath()) ('dolevi-bridge-'+[guid]::NewGuid())
 git clone --no-checkout --single-branch --branch develop/1.10.0 "https://github.com/$repo.git" $root
 if($LASTEXITCODE -ne 0){throw 'Clone failed'}
+$diagnostic=[ordered]@{}
+$code='E300'
 try{
  git -C $root checkout --detach $q.base
  if($LASTEXITCODE -ne 0){throw 'Checkout failed'}
@@ -26,20 +28,30 @@ try{
  $p=@($events | ForEach-Object {$_ | ConvertFrom-Json})
  $m=@($p | Where-Object {$_.type -eq 'item.completed' -and $_.item.type -eq 'agent_message'})
  $done=@($p | Where-Object {$_.type -eq 'turn.completed'})
- if($m.Count -lt 1 -or $m[-1].item.text.Trim() -cne $q.expected -or $done.Count -ne 1 -or @($p | Where-Object {$_.type -match 'failed|error'}).Count -ne 0){throw 'Result validation failed'}
+ $bad=@($p | Where-Object {$_.type -match 'failed|error'})
+ $diagnostic.messageCount=$m.Count
+ $diagnostic.completedCount=$done.Count
+ $diagnostic.errorCount=$bad.Count
+ $diagnostic.patchCount=@($p | Where-Object {$_.type -eq 'item.completed' -and $_.item.type -eq 'file_change'}).Count
+ $diagnostic.fileExists=Test-Path -LiteralPath (Join-Path $root 'bridge-smoke.txt')
+ $diagnostic.expectedResponse=($m.Count -gt 0 -and $m[-1].item.text.Trim() -ceq $q.expected)
+ if($m.Count -lt 1){$code='E301';throw 'No agent response'}
+ if($bad.Count -ne 0){$code='E304';throw 'Codex error event'}
+ if($done.Count -ne 1){$code='E303';throw 'Unexpected completion count'}
+ if(-not $diagnostic.expectedResponse){$code='E302';throw 'Unexpected agent response'}
  $head=git -C $root rev-parse HEAD
- if($LASTEXITCODE -ne 0 -or $head -cne $q.base){throw 'HEAD changed'}
+ if($LASTEXITCODE -ne 0 -or $head -cne $q.base){$code='E305';throw 'HEAD changed'}
  $changes=@(git -C $root status --porcelain --untracked-files=all)
- if($LASTEXITCODE -ne 0 -or $changes.Count -ne 1 -or $changes[0] -cne '?? bridge-smoke.txt'){throw 'Unexpected changes'}
+ if($LASTEXITCODE -ne 0 -or $changes.Count -ne 1 -or $changes[0] -cne '?? bridge-smoke.txt'){$code='E306';throw 'Unexpected changes'}
  $file=Get-Item -LiteralPath (Join-Path $root 'bridge-smoke.txt')
- if($file.Attributes -band [IO.FileAttributes]::ReparsePoint){throw 'Unexpected link'}
- if([IO.File]::ReadAllText($file.FullName).TrimEnd([char[]]"`r`n") -cne $q.fileContent){throw 'File content mismatch'}
+ if($file.Attributes -band [IO.FileAttributes]::ReparsePoint){$code='E306';throw 'Unexpected link'}
+ if([IO.File]::ReadAllText($file.FullName).TrimEnd([char[]]"`r`n") -cne $q.fileContent){$code='E307';throw 'File content mismatch'}
  $result=[ordered]@{schema='dolevi-result-1';version='0.3.0';taskId=$q.taskId;approvalSha256=$hash;status='PASS';check='isolated-write';base=$q.base;file='bridge-smoke.txt'}
- $result | ConvertTo-Json -Compress | gh issue comment $Issue --repo $repo --body-file -
+ $result | ConvertTo-Json -Depth 5 -Compress | gh issue comment $Issue --repo $repo --body-file -
  if($LASTEXITCODE -ne 0){throw 'Reporting failed'}
  Write-Host 'Bridge v0.3.0 PASS'
 }catch{
- $failure=[ordered]@{schema='dolevi-result-1';version='0.3.0';taskId=$q.taskId;approvalSha256=$hash;status='FAIL';check='isolated-write';reason='Execution or independent validation failed; see local console'}
+ $failure=[ordered]@{schema='dolevi-result-1';version='0.3.0';taskId=$q.taskId;approvalSha256=$hash;status='FAIL';check='isolated-write';reason=$code;diagnostic=$diagnostic}
  $failure | ConvertTo-Json -Compress | gh issue comment $Issue --repo $repo --body-file -
  throw
 }finally{Remove-Item -LiteralPath $root -Recurse -Force}
