@@ -1,19 +1,19 @@
-# Status — 2026-11-24
+# Status — 2026-11-25
 
-Approved baseline: 1.9.7. Target: 1.10.0. No completed credit implementation or new release is evidenced. User accepted design changes; previous payment and backup tests were reported successful. Full regression evidence is not available.
+Approved baseline: 1.9.7. Target: 1.10.0. Baseline commit: eda7c197d8cd522d1b0730b80add0909b4035551. Development branch: develop/1.10.0. Keep main unchanged until explicit release approval. GitHub Pages publishing source has not been independently verified in this session.
 
-## Handover evidence
-- Local release ZIP 1.9.7 inspected: index.html, sw.js, manifest, three icons, inherited requirements.
-- Inherited requirements end at 1.9.4; current overlay records subsequent conversation decisions.
-- Approved icon copied unchanged from supplied WebP. Not yet installed.
-- Source inspection identified live-entry invoice history dependency and hardcoded VAT. No source code changed in this documentation handover.
-- Live GitHub state not checked. Confirm repository matches baseline before work.
+## Completed
+- GitHub read/write access verified and repository reorganized at baseline commit; runtime file hashes unchanged.
+- Static review of central invoice, payment, backup, persistence and PDF paths recorded in [CODE_REVIEW.md](CODE_REVIEW.md).
+- Development branch created from baseline. No runtime changes or credit implementation yet.
+- Previous payment and backup tests reported successful; full regression evidence unavailable. Approved icon retained at ../assets/approved-icon.webp, not yet installed.
 
 ## Next steps
-1. Establish baseline commit and regression fixtures; inspect all archive read paths and old backup schemas.
-2. Implement immutable historical reads and test them independently.
-3. Implement credit calculations, draft/issue workflow, return policy and refunds; document schema and rounding decisions.
-4. Implement UI/PDF/backup changes and approved icon; preserve existing design.
-5. Run automated tests and package only after passing; user tests on iPhone. Update status and changelog with actual evidence.
+1. Inspect remaining archive read paths and legacy backup schemas; establish synthetic regression fixtures.
+2. Implement and independently test immutable historical reads.
+3. Resolve monetary rounding, legacy VAT and transaction safety; implement common calculations.
+4. Implement credit drafts/issuance, optional return, refunds and signed balances; update schema and backup validation.
+5. Adapt PDF and approved icon/name; preserve existing UI and PWA identity.
+6. Execute automated regression tests, then installed-iPhone acceptance using an isolated test deployment; release only after approval.
 
-Open: PDF preview and permanent PDF archive; Swedish compliance verification; robust production numbering/recovery; production data initialization. Do not commit real customer data or backups. No background work is running.
+Open: PDF preview and permanent PDF archive; Swedish compliance verification; robust production numbering/recovery; production initialization. All existing data is test data. Never commit real customer data or backups. No background work is running.
