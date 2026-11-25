@@ -35,7 +35,7 @@ try{
  if($file.Attributes -band [IO.FileAttributes]::ReparsePoint){throw 'Unexpected link'}
  if([IO.File]::ReadAllText($file.FullName).TrimEnd([char[]]"`r`n") -cne $q.fileContent){throw 'File content mismatch'}
  $result=[ordered]@{schema='dolevi-result-1';version='0.3.0';taskId=$q.taskId;approvalSha256=$hash;status='PASS';check='isolated-write';base=$q.base;file='bridge-smoke.txt'}
- gh issue comment $Issue --repo $repo --body ($result | ConvertTo-Json -Compress)
+ $result | ConvertTo-Json -Compress | gh issue comment $Issue --repo $repo --body-file -
  if($LASTEXITCODE -ne 0){throw 'Reporting failed'}
  Write-Host 'Bridge v0.3.0 PASS'
 }finally{Remove-Item -LiteralPath $root -Recurse -Force}

@@ -23,7 +23,7 @@ try{
  $bad=@($p | Where-Object {$_.type -match 'failed|error' -or ($_.type -like 'item.*' -and $_.item.type -notin @('agent_message','reasoning'))})
  if($m.Count -ne 1 -or $done.Count -ne 1 -or $bad.Count -ne 0 -or $m[0].item.text.Trim() -cne $q.expected){throw 'Result validation failed'}
  $result=[ordered]@{schema='dolevi-result-1';version='0.2.0';taskId=$q.taskId;approvalSha256=$hash;status='PASS';check='exact-response'}
- gh issue comment $Issue --repo $repo --body ($result | ConvertTo-Json -Compress)
+ $result | ConvertTo-Json -Compress | gh issue comment $Issue --repo $repo --body-file -
  if($LASTEXITCODE -ne 0){throw 'Reporting failed'}
  Write-Host 'Bridge v0.2.0 PASS'
 }finally{Remove-Item -LiteralPath $root -Recurse -Force}
