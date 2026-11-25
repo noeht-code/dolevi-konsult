@@ -10,3 +10,6 @@ Product owner approves requirements and releases. ChatGPT prepares tasks and rev
 
 ## AUT-05 — Bridge v0.1.0
 Manual invocation of tools/bridge/Invoke-DoleviBridge.ps1 -Issue 1. Only the exact known smoke-test body is allowed; owner and open state checked. Temporary working directory, read-only sandbox, JSONL validation, fixed public result comment. Usage printed locally; failures stop locally without publishing raw logs. No arbitrary issue execution, write mode, polling, automatic merge or retries. Review script before running. Not yet executed on Windows; sandbox is not a guarantee against all access. Do not run unattended. Future versions require explicit authorization, isolated worktrees, safe reporting and tests. WP-01 iPhone acceptance remains open; WP-02 not started.
+
+## AUT-05 — execution evidence
+2026-11-25 21:39:09 UTC: owner-authored [PASS comment](https://github.com/noeht-code/dolevi-konsult/issues/1#issuecomment-7175362810) independently retrieved by ChatGPT after user ran the installed script. Positive end-to-end smoke test passed. Local token output and temporary-directory cleanup not independently inspected; negative cases and unattended execution not verified. No application changes authorized. Next: standardize approved task and result formats before enabling writes.
