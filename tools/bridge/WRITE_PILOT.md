@@ -1,0 +1,3 @@
+# Bridge v0.3.0 — isolated write pilot
+
+Extends protocol v1 with mode=workspace-write, base (full commit SHA), scope=bridge-smoke.txt, fileContent=DOLEVI BRIDGE WRITE TEST, expected=BRIDGE WRITE PASS. Exact issue body hash and owner required. Separate temporary clone and detached checkout; Codex workspace-write; independent Git status, HEAD and file-content checks; fixed structured result; temporary clone removed. No commits, pushes, PRs, application edits or retained deliverables in this pilot. Sandbox and final Git status do not prove absence of all side effects. Review before execution. Windows tests pending, including rejection of incorrect hashes and unexpected changes. v0.2.0 must pass before running v0.3.0. WP-01 acceptance remains open; WP-02 not started.
