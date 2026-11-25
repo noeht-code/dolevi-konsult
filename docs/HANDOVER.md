@@ -14,3 +14,6 @@
 
 ## Windows positive polling evidence
 2026-11-25: empty queue, local approval, Once execution and subsequent empty queue passed. Issue 10 result PASS/COMPLETE, cleanup=true (reported), PR 11 independently inspected, only expected test file, closed without merge. AUT-0501 through 0505 passed for Once pilot. Next: approve issue 12, then modify its body before execution; verify rejection and consumed queue. Continuous polling and exclusive worker lock remain unverified. No application edits.
+
+## Modified approval test
+Issue 12 body modified after local approval. Windows console confirmed Approval mismatch, runner failure warning, then No pending approvals. AUT-0506 PASS; no Codex start on this path. Issue closed. Next: continuous worker in first terminal, second worker must fail exclusive lock, then approve new positive pilot while first worker is running. Verify automatic pickup and PR. Stop worker after test. AUT-0507/0508 pending.
