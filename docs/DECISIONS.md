@@ -16,3 +16,6 @@
 | DEC-012 | Integer öre and explicit credit line allocation, migration strategy | Proposed engineering approach |
 
 No approval of production use. New decisions must record rationale, affected requirements and tests. Do not treat proposed schema as final.
+
+## Development cost constraint
+Use free services and standard GitHub-hosted runners for automated testing. Any additional cost requires explicit project owner approval. Codex CLI integration is the selected first automation pilot; authentication, usage limits and end-to-end integration remain to be verified.
