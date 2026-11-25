@@ -20,7 +20,7 @@ try{
  git -C $root checkout --detach $q.base
  if($LASTEXITCODE -ne 0){throw 'Checkout failed'}
  if(Test-Path (Join-Path $root 'bridge-smoke.txt')){throw 'Test file already exists'}
- $prompt='Create only bridge-smoke.txt containing exactly DOLEVI BRIDGE WRITE TEST (optional final newline). Do not modify other files, commit, push, access credentials or network. Return BRIDGE WRITE PASS. Approved task JSON: '+$t.body
+ $prompt='Use only the apply_patch file editing tool to create bridge-smoke.txt containing exactly DOLEVI BRIDGE WRITE TEST (optional final newline). Do not invoke shell commands, inspect Git status, read back the file, modify other files, commit, push, access credentials or network. The caller independently checks Git and file contents. If editing succeeds return BRIDGE WRITE PASS; otherwise return BRIDGE WRITE FAIL. Approved task JSON: '+$t.body
  $events=$prompt | codex exec --cd $root --sandbox workspace-write --ignore-user-config --ephemeral --json -
  if($LASTEXITCODE -ne 0){throw 'Codex failed'}
  $p=@($events | ForEach-Object {$_ | ConvertFrom-Json})
@@ -38,4 +38,8 @@ try{
  $result | ConvertTo-Json -Compress | gh issue comment $Issue --repo $repo --body-file -
  if($LASTEXITCODE -ne 0){throw 'Reporting failed'}
  Write-Host 'Bridge v0.3.0 PASS'
+}catch{
+ $failure=[ordered]@{schema='dolevi-result-1';version='0.3.0';taskId=$q.taskId;approvalSha256=$hash;status='FAIL';check='isolated-write';reason='Execution or independent validation failed; see local console'}
+ $failure | ConvertTo-Json -Compress | gh issue comment $Issue --repo $repo --body-file -
+ throw
 }finally{Remove-Item -LiteralPath $root -Recurse -Force}
