@@ -23,7 +23,7 @@ const http=require('node:http');
  check(new TextDecoder().decode(Uint8Array.from(before)).startsWith('%PDF-1.4'),'PDF header');
  check(new TextDecoder().decode(Uint8Array.from(before)).includes('Original buyer'),'PDF historical buyer');
  tab('invoices');
- const restore=async p=>{const file=new File([JSON.stringify(p)],'fixture.json',{type:'application/json'});await prepareRestore({target:{files:[file]}});check(!!$('restoreNow'),'restore accepted');$('restoreConfirm').checked=true;$('restoreNow').click();};
+ const restore=async p=>{const file=new File([JSON.stringify(p)],'fixture.json',{type:'application/json'});await prepareRestore({target:{files:[file]}});check(!!$('restoreNow'),'restore accepted');$('restoreConfirm').checked=true;$('restoreConfirm').dispatchEvent(new Event('change'));check(!$('restoreNow').disabled,'restore button enabled');$('restoreNow').click();check(localStorage.getItem('dolevi-demo-v01')!==null,'restore persisted');};
  await restore(payload);
  check(JSON.parse(localStorage.getItem('dolevi-demo-v01')).invoices[0].archiveHtml===html,'stored archive');
  check(receivableTotal(data.invoices[0])===250,'historical gross after restore');
