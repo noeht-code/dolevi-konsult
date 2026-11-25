@@ -14,3 +14,6 @@ LOCAL COMPONENT TESTS PASS
 ```
 
 Full runner integration, concurrent claims and failure reporting/no-publication remain pending.
+
+## Latest evidence
+2026-11-25: concurrent claim test PASS on Windows. Issue 7 stale-base integration returned FAIL/BASE, published=false, pr=null, cleanup=true: https://github.com/noeht-code/dolevi-konsult/issues/7#issuecomment-7176588540. Repeat blocked by persistent claim. Positive v0.4.2 regression is next. Failure after Codex and full isolation remain unverified. This update supersedes earlier pending statements about concurrent claims and stale-base failure.
