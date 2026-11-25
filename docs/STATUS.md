@@ -17,3 +17,6 @@ Approved baseline: 1.9.7. Target: 1.10.0. Baseline commit: eda7c197d8cd522d1b073
 6. Execute automated regression tests, then installed-iPhone acceptance using an isolated test deployment; release only after approval.
 
 Open: PDF preview and permanent PDF archive; Swedish compliance verification; robust production numbering/recovery; production initialization. All existing data is test data. Never commit real customer data or backups. No background work is running.
+
+## WP-01 implementation
+Historical register, receivable and backup amount reads now use archived entries/customer, never current entries for issued invoices. Missing legacy snapshots display unavailable history and disable payment registration; existing payment records are retained and their amount ceiling cannot be verified without historical entries. Draft reads remain live. Added synthetic Node regression test tests/wp01-history.test.cjs; not executed in this session. Full PDF/browser/iPhone and legacy backup fixture tests remain pending. VAT and rounding remain unchanged for WP-02. No release or main update.

@@ -1,0 +1,31 @@
+// Run with: node tests/wp01-history.test.cjs
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const html = fs.readFileSync(require('node:path').join(__dirname,'../index.html'),'utf8');
+const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
+new vm.Script(script); // syntax check entire inline application
+const names=['invoiceItems','invoiceCustomer','invoiceNet','receivableTotal','receivablePaid','receivableRemaining','receivableStatus','invoicePeriod','invoiceRegisterCard','invoiceStatusLabel'];
+const code=names.map(name=>{const line=script.split('\n').find(l=>l.startsWith('function '+name+'('));assert.ok(line,name);return line}).join('\n');
+const data={entries:[{id:1,quantity:2,price:100,date:'2026-01-01'}],customers:[{id:1,name:'Original'}]};
+const i={status:'issued',customerId:1,entryIds:[1],invoiceNumber:'100',archiveSnapshot:{entries:structuredClone(data.entries),customer:structuredClone(data.customers[0])},archiveHtml:'frozen',payments:[]};
+const ctx=vm.createContext({data,money:String,esc:String,localDate:()=> '2026-01-01',i});
+vm.runInContext(code,ctx);
+const run=s=>vm.runInContext(s,ctx);
+const card=run('invoiceRegisterCard(i)');
+assert.equal(run('invoiceNet(i)'),200);
+assert.equal(run('receivableTotal(i)'),250);
+data.entries[0].price=900;data.entries[0].date='2026-02-01';data.entries[0].invoiceId=2;data.customers[0].name='Changed';
+assert.equal(run('invoiceRegisterCard(i)'),card);
+assert.equal(run('receivableTotal(i)'),250);
+assert.equal(run('invoiceNet({...i,status:"draft"})'),1800);
+assert.equal(run('invoiceCustomer({...i,status:"draft"}).name'),'Changed');
+data.entries.length=0;data.customers.length=0;
+assert.equal(run('invoiceRegisterCard(i)'),card);
+assert.equal(run('invoiceNet({...i,archiveSnapshot:null})'),null);
+assert.equal(run('receivableRemaining({...i,archiveSnapshot:null})'),null);
+assert.equal(run('receivableStatus({...i,archiveSnapshot:null})'),'Historik saknas');
+assert.match(run('invoiceRegisterCard({...i,archiveSnapshot:null})'),/Historiska rader saknas/);
+assert.equal(i.archiveHtml,'frozen');
+i.payments.push({amount:50});assert.equal(run('receivableRemaining(i)'),200);
+console.log('WP-01 history assertions passed');
