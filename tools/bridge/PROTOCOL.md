@@ -1,0 +1,3 @@
+# Bridge task protocol v1
+
+Issue body is a plain JSON object with schema=dolevi-task-1, taskId=BRIDGE-<issue number>, mode=read-only, objective, requirements, scope, restrictions, acceptance, tests, deliverables (nonempty strings), expected (uppercase ASCII response). The operator supplies SHA-256 of the exact UTF-8 issue body after review; author and open state alone do not authorize execution. Result is JSON with schema, version, taskId, approvalSha256, status and check. No raw agent output is published. v0.2.0 only supports exact-response smoke tests, not general research or coding. Manual invocation, no polling. Negative tests: wrong hash, wrong author, closed issue, invalid schema, unexpected tool event. Windows execution pending.
