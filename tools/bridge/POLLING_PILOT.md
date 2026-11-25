@@ -7,3 +7,6 @@ Implemented, not execution verified. Local explicit approval is required because
 
 ## Modified approval test
 Issue 12 body modified after local approval. Windows console confirmed Approval mismatch, runner failure warning, then No pending approvals. AUT-0506 PASS; no Codex start on this path. Issue closed. Next: continuous worker in first terminal, second worker must fail exclusive lock, then approve new positive pilot while first worker is running. Verify automatic pickup and PR. Stop worker after test. AUT-0507/0508 pending.
+
+## Final pilot verification — 2026-11-25
+AUT-0507 PASS: second worker failed exclusive worker.lock open while first was running. AUT-0508 PASS: repeated empty queue messages, local approval of issue 13 in second terminal, automatic pickup by first worker, PASS/COMPLETE report, return to empty queue, worker stopped. PR 14 independently inspected: draft, correct base, only expected test file; closed without merge. Issue 13 closed. All eight acceptance criteria passed within pilot scope. This supersedes prior pending status. Report: https://github.com/noeht-code/dolevi-konsult/issues/13#issuecomment-7176926836. No long-duration or general-purpose unattended operation verified. No app changes.
