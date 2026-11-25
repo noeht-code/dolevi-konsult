@@ -3,10 +3,16 @@ $ErrorActionPreference='Stop'
 $repo='noeht-code/dolevi-konsult'
 $queue=Join-Path $env:LOCALAPPDATA 'DoleviBridge\approvals'
 New-Item -ItemType Directory -Path $queue -Force | Out-Null
+$lockPath=Join-Path $queue 'worker.lock'
+$lock=[IO.File]::Open($lockPath,[IO.FileMode]::OpenOrCreate,[IO.FileAccess]::ReadWrite,[IO.FileShare]::None)
+try{
 do{
- foreach($file in @(Get-ChildItem -LiteralPath $queue -Filter '*.json' -File | Sort-Object Name)){
+ $files=@(Get-ChildItem -LiteralPath $queue -Filter '*.json' -File | Sort-Object Name)
+ if($files.Count -eq 0){Write-Host 'No pending approvals'}
+ foreach($file in $files){
   if($file.Name -cnotmatch '^([1-9][0-9]*)\.json$'){continue}
-  $issue=[int]$Matches[1]
+  $issue=0
+  if(-not [int]::TryParse($Matches[1],[ref]$issue)){continue}
   $running=$file.FullName+'.consumed'
   try{[IO.File]::Move($file.FullName,$running)}catch{continue}
   try{
@@ -18,3 +24,5 @@ do{
  }
  if(-not $Once){Start-Sleep -Seconds 30}
 }while(-not $Once)
+}finally{$lock.Dispose()}
+
