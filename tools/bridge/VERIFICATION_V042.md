@@ -17,3 +17,6 @@ Full runner integration, concurrent claims and failure reporting/no-publication 
 
 ## Latest evidence
 2026-11-25: concurrent claim test PASS on Windows. Issue 7 stale-base integration returned FAIL/BASE, published=false, pr=null, cleanup=true: https://github.com/noeht-code/dolevi-konsult/issues/7#issuecomment-7176588540. Repeat blocked by persistent claim. Positive v0.4.2 regression is next. Failure after Codex and full isolation remain unverified. This update supersedes earlier pending statements about concurrent claims and stale-base failure.
+
+## Positive regression completed
+Issue 8 returned PASS/COMPLETE, published=true, cleanup=true. PR 9 independently inspected: draft, base develop/1.10.0, only bridge-pr-smoke.txt added with exact expected text. Closed without merge. v0.4.2 pilot gate passed; proceed to v0.5.0 restricted polling pilot. No application development authorized. Cleanup is runner-reported; post-Codex failure paths and comprehensive isolation not verified.
